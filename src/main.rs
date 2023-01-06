@@ -1,16 +1,18 @@
 use rand::Rng;
 use ordered_float::OrderedFloat;
+
 const CASES: usize = 6;
-const DIM1: usize = 5;
-const DIM2: usize = 5;
-const DEBUG: bool = false;
+const DIM1: usize = 8;
+const DIM2: usize = 8;
+const DEBUG: bool = true;
+
 fn main() {
     //Define matrix of this stupid thing because Rust hates structs
     let mut matrix : [ [ [f64; CASES]; DIM1]; DIM2] = [[[0.0; CASES]; DIM1]; DIM2]; 
     
     data_gen(&mut matrix);
 
-    if DEBUG {println!("DONE ASSIGNING. FIRST ELEMENT {}", matrix[0][0][0]);}
+    if DEBUG {println!("Done assigning. First cell of matrix {}", matrix[0][0][0]);}
 
     proto_collapse(&mut matrix);
     
@@ -25,7 +27,7 @@ fn data_gen(matrix : &mut [ [ [ f64; CASES]; DIM1]; DIM2]) {
         for y in x {
             for z in y.iter_mut() {
                 *z = rng.gen_range(0.0..1.0);
-                if DEBUG {print!("ASSIGNING {}", z);}
+                if DEBUG {println!("Random value assigned - {}", z);}
             }
         }
     }
@@ -33,14 +35,22 @@ fn data_gen(matrix : &mut [ [ [ f64; CASES]; DIM1]; DIM2]) {
 
 //Function to collapse each individual cell without any influence from neighboring cells
 fn proto_collapse(matrix : &mut [ [ [ f64; CASES]; DIM1]; DIM2]) {
+    let mut rng = rand::thread_rng();
     //Observe the values and collapse them assuming independence of all cells
     for x in matrix {
         for y in x {
             //Apparently floats can't possibly be compared to one another, thanks Rust
             let max = (0..y.len()).max_by_key(|&i| OrderedFloat(y[i]));
             if DEBUG {println!("Highest element probability is {}",  y[max.unwrap()]);}
+            
+            //Set every entry to 0.0 before 1.0 assignment to prevent branching
+            for elem in y.iter_mut() { *elem = 0.0; }
+            if DEBUG {println!("Accessing random y element- {}",  y[rng.gen_range(0..CASES)]);}
+            
+            //Set max prob to 1.0
             y[max.unwrap()] = 1.0;
             if DEBUG {println!("Highest element probability should now be 1.0 - {}",  y[max.unwrap()]);}
+
         }
     }
 }
