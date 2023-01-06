@@ -10,7 +10,7 @@ fn main() {
     
     data_gen(&mut matrix);
 
-    println!("DONE ASSIGNING. FIRST ELEMENT {}", matrix[0][0][0]);
+    if DEBUG {println!("DONE ASSIGNING. FIRST ELEMENT {}", matrix[0][0][0]);}
 
     collapse(&mut matrix);
     
