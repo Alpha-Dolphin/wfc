@@ -12,12 +12,13 @@ fn main() {
 
     if DEBUG {println!("DONE ASSIGNING. FIRST ELEMENT {}", matrix[0][0][0]);}
 
-    collapse(&mut matrix);
+    proto_collapse(&mut matrix);
     
     matrix_print(matrix);
 
 }
 
+//Function to generate probablities for each outcome
 fn data_gen(matrix : &mut [ [ [ f64; CASES]; DIM1]; DIM2]) {
     let mut rng = rand::thread_rng();
     for x in matrix {
@@ -30,19 +31,21 @@ fn data_gen(matrix : &mut [ [ [ f64; CASES]; DIM1]; DIM2]) {
     }
 }
 
-fn collapse(matrix : &mut [ [ [ f64; CASES]; DIM1]; DIM2]) {
+//Function to collapse each individual cell without any influence from neighboring cells
+fn proto_collapse(matrix : &mut [ [ [ f64; CASES]; DIM1]; DIM2]) {
     //Observe the values and collapse them assuming independence of all cells
     for x in matrix {
         for y in x {
             //Apparently floats can't possibly be compared to one another, thanks Rust
             let max = (0..y.len()).max_by_key(|&i| OrderedFloat(y[i]));
-            if DEBUG {println!("Highest element is {}",  y[max.unwrap()]);}
+            if DEBUG {println!("Highest element probability is {}",  y[max.unwrap()]);}
             y[max.unwrap()] = 1.0;
-            if DEBUG {println!("Highest element is {}",  y[max.unwrap()]);}
+            if DEBUG {println!("Highest element probability should now be 1.0 - {}",  y[max.unwrap()]);}
         }
     }
 }
 
+//Function to print the matrix
 fn matrix_print(matrix : [ [ [ f64; CASES]; DIM1]; DIM2]) {
     //Outer loop to print newlines
     for x in matrix {
