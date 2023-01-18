@@ -9,3 +9,4 @@ edition = "2021"
 rand = "0.8.5"
 ordered-float = { version = "3.0", default-features = false }
 float_eq = "1"
+rand_distr = "0.4"

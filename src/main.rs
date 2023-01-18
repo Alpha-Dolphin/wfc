@@ -1,5 +1,6 @@
 use rand::Rng;
 use ordered_float::OrderedFloat;
+use rand_distr::{Normal, Distribution};
 
 const CASES: usize = 6;
 const DIM1: usize = 8;
@@ -12,8 +13,6 @@ fn main() {
     
     data_gen(&mut matrix);
 
-    if DEBUG {println!("Done assigning. First cell of matrix {}", matrix[0][0][0]);}
-
     proto_collapse(&mut matrix);
     
     matrix_print(matrix);
@@ -22,16 +21,27 @@ fn main() {
 
 //Function to generate probablities for each outcome
 fn data_gen(matrix : &mut [ [ [ f64; CASES]; DIM1]; DIM2]) {
+    //Make a normal distribution
+    let normal = Normal::new(1.0/CASES as f64, 1.0/(CASES as f64).sqrt()).unwrap();
     let mut rng = rand::thread_rng();
+
     for x in matrix {
         for y in x {
+            let mut sum = 0.0;
             for z in y.iter_mut() {
-                *z = rng.gen_range(0.0..1.0);
-                if DEBUG {println!("Random value assigned - {}", z);}
+                let value = normal.sample(&mut rng);
+                sum += value;
+                *z = value;
+                if DEBUG {println!("Random value assigned - {}\nSum - {}", z, sum);}
+            }
+            for z in y.iter_mut() {
+                *z = *z/sum;
+                if DEBUG {println!("Random value after div - {}", z);}
             }
         }
     }
 }
+
 
 //Function to collapse each individual cell without any influence from neighboring cells
 fn proto_collapse(matrix : &mut [ [ [ f64; CASES]; DIM1]; DIM2]) {
