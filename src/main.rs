@@ -55,7 +55,7 @@ fn proto_collapse(matrix : &mut [ [ [ f64; CASES]; DIM1]; DIM2]) {
             
             //Set every entry to 0.0 before 1.0 assignment to prevent branching
             for elem in y.iter_mut() { *elem = 0.0; }
-            if DEBUG {println!("Accessing random y element- {}",  y[rng.gen_range(0..CASES)]);}
+            if DEBUG {println!("Accessing random y element - {}",  y[rng.gen_range(0..CASES)]);}
             
             //Set max prob to 1.0
             y[max.unwrap()] = 1.0;
